@@ -1,32 +1,33 @@
-import React, { useEffect } from 'react';
-import { Provider, useDispatch } from 'react-redux';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import React, { useEffect, useState } from "react";
+import { View,StyleSheet, StatusBar } from "react-native";
+import "./src/localization/i18n";
+import { initLanguage } from "./src/localization/i18n";
+import DashboardScreen from "./src/screen/DashboardScreen";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { store } from './src/store';
-import { AppNavigator } from './src/navigation/AppNavigator';
-import { bootstrapAuth } from './src/services/authBootstrap';
-import { initDB } from './src/storage/db';
-import ErrorBoundary from './src/components/ErrorBoundary';
-
-const Root = () => {
-  const dispatch = useDispatch();
+export default function App() {
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    initDB();
-    bootstrapAuth(dispatch);
-  }, [dispatch]);
+    initLanguage().finally(() => setReady(true));
+  }, []);
 
-  return <AppNavigator />;
-};
+  if (!ready) return <View />;
 
-const App = () => (
-  <Provider store={store}>
-    <SafeAreaProvider>
-      <ErrorBoundary>
-        <Root />
-      </ErrorBoundary>
-    </SafeAreaProvider>
-  </Provider>
-);
+  return (
+    <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+      <DashboardScreen />
+    </SafeAreaView >
+  )
 
-export default App;
+}
+
+const styles=  StyleSheet.create({
+container:{
+  flex:1,
+  // paddingHorizontal:12,
+  backgroundColor:"#F0F0F0",
+
+}
+})
